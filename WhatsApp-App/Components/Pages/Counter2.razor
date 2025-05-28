@@ -46,18 +46,32 @@
                     <li>@user</li>
                 }
             </ul>
-            <li>Top 10 Words:</li>
+            <li>Top 10 Messages:</li>
             <ol>
-                @foreach (wordCount word in topXWords)
+                @foreach (entryCount word in topMessages)
                 {
                     <li>@word.Content: @word.Count</li>
                 }
             </ol>
             <li>Most chatty:</li>
             <ol>
-                @foreach (wordCount sender in topSenders)
+                @foreach (entryCount sender in topSenders)
                 {
                     <li>@sender.Content: @sender.Count</li>
+                }
+            </ol>
+            <li>Top 10 emojis:</li>
+            <ol>
+                @foreach (entryCount emoji in topEmojis)
+                {
+                    <li>@emoji.Content: @emoji.Count</li>
+                }
+            </ol>
+            <li>Messages per time:</li>
+            <ol>
+                @foreach (entryCount time in times)
+                {
+                    <li>@time.Content:00 : @time.Count</li>
                 }
             </ol>
             <li>Earliest message: @filteredMessages.Count</li>
@@ -91,8 +105,10 @@
 
     private string statusMessage = "";
     private List<string> participants = new List<string> { };
-    private List<wordCount> topXWords = new List<wordCount> { };
-    private List<wordCount> topSenders = new List<wordCount> { };
+    private List<entryCount> topMessages = new List<entryCount> { };
+    private List<entryCount> topEmojis = new List<entryCount> { };
+    private List<entryCount> times = new List<entryCount> { };
+    private List<entryCount> topSenders = new List<entryCount> { };
 
     public class messageFormat
     {
@@ -102,7 +118,7 @@
         public string Content = "";
     }
 
-    public class wordCount
+    public class entryCount
     {
         public string Content = "";
         public int Count = 0;
@@ -203,32 +219,72 @@
 
         // first interaction (first message and response)
 
-        // activity per time of day
-
         // activity per month
 
-        // fave emoji
+        // activity per time of day
+
+        times = filteredMessages
+        .Where(message => !string.IsNullOrEmpty(message.Time.Split(':')[0]))
+        .GroupBy(message => message.Time.Split(':')[0])
+        .Select(grp => new entryCount { Content = grp.Key, Count = grp.Count() })
+        .OrderByDescending(grp => grp.Content)
+        .ToList();
+
+        // most curious (look for ?)
+
 
         // top 10 words (duplicates present: "yeah" and "Yeah")
-        topXWords = filteredMessages
+        topMessages = filteredMessages
         // Filters
         .Where(message => !string.IsNullOrEmpty(message.Content))
         .Where(message => message.Content != "<Media omitted>")
         // Group and select order (toLower to reduce duplicates)
         .GroupBy(message => message.Content.ToLower())
-        .Select(grp => new wordCount { Content = grp.Key, Count = grp.Count() })
+        .Select(grp => new entryCount { Content = grp.Key, Count = grp.Count() })
         .OrderByDescending(grp => grp.Count)
         // Select top 10
         .Take(10)
         .ToList();
 
-        // person who sent the most
 
+        // person who sent the most
         topSenders = filteredMessages
         .Where(message => !string.IsNullOrEmpty(message.Sender))
         .GroupBy(message => message.Sender)
-        .Select(grp => new wordCount { Content = grp.Key, Count = grp.Count() })
+        .Select(grp => new entryCount { Content = grp.Key, Count = grp.Count() })
         .OrderByDescending(grp => grp.Count)
+        .ToList();
+
+
+        // Most sent emoji
+        string emojiRegex = @"\p{So}|\p{Cs}\p{Cs}(\p{Cf}\p{Cs}\p{Cs})*";
+
+        List<string> emojis = new List<string>();
+
+
+        // for each message
+        foreach (messageFormat message in filteredMessages)
+        {
+            // Check if the emoji matches the regex
+            var matches = Regex.Matches(message.Content, emojiRegex);
+
+            // for every match, add to list
+            foreach (Match match in matches)
+            {
+                emojis.Add(match.Value);
+            }
+        }
+
+
+
+        // top 10 words (duplicates present: "yeah" and "Yeah")
+        topEmojis = emojis
+        // Group and select order (toLower to reduce duplicates)
+        .GroupBy(emoji => emoji)
+        .Select(grp => new entryCount { Content = grp.Key, Count = grp.Count() })
+        .OrderByDescending(grp => grp.Count)
+        // Select top 10
+        .Take(10)
         .ToList();
     }
 }
