@@ -1,5 +1,6 @@
 ﻿@* Add this as a page with a href *@
 @page "/fileInput"
+@using System.Text.RegularExpressions
 @rendermode InteractiveServer
 
 @* 14:25 - Alex Purser: Gg 28/05/2025, 14:25 - Alex Purser: Vg 28/05/2025, *@
@@ -16,21 +17,42 @@
 <InputFile OnChange="LoadFile" accept=".txt" />
 
 
-
 @* If a file exists, display its information *@
 @if (file != null)
 {
+    <h3>File information:</h3>
     <ul>
         <li>Name: @file?.Name</li>
         <li>Last modified: @file?.LastModified.ToString()</li>
         <li>Size (bytes): @file?.Size</li>
         <li>Content type: @file?.ContentType</li>
-        <li>Content: @content</li>
     </ul>
     <p>-------------------------------------------------------------------</p>
-    @if (allFiltered)
+    @if (!allFiltered)
     {
+        <p><em>Loading...</em></p>
+        @* <p><em>Loading... @statusMessage</em></p> *@
+    }
+    else
+    {
+        <h3>Message information: </h3>
+        <ul>
+            <li>Total messages: @filteredMessages.Count</li>
+            <li>Participant length: @participants.Count</li>
+            <li>Participants:</li>
+            <ul>
+                @foreach (string user in participants)
+                {
+                    <li>@user</li>
+                }
+            </ul>
+            <li>Earliest message: @filteredMessages.Count</li>
+            <li>Latest messages: @filteredMessages.Count</li>
+        </ul>
 
+
+        @* Limit / hide this to boost performance *@
+        <h4>All messages: </h4>
         @foreach (messageFormat message in filteredMessages)
         {
             <li>
@@ -48,6 +70,9 @@
 @* Code block for writing C# *@
 @code {
 
+    private string statusMessage = "";
+    private List<string> participants = new List<string> { };
+
     public class messageFormat
     {
         public string Date = "";
@@ -59,17 +84,20 @@
     private IBrowserFile? file;
     private string content = "";
 
-    private List<object> filteredMessages = new List<object> { };
+    private List<messageFormat> filteredMessages = new List<messageFormat> { };
     private bool allFiltered = false;
 
 
     private async Task LoadFile(InputFileChangeEventArgs e)
     {
+        // Reset page
+        allFiltered = false;
+
         // Extract the file
         file = e.File;
 
         // Open the text file using a stream reader.
-        var fileStream = file.OpenReadStream();
+        var fileStream = file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
         var reader = new StreamReader(fileStream);
 
         // Read the stream as a string.
@@ -77,17 +105,23 @@
 
         // Assign to global content variable
         content = fileContent;
-        await SplitMessages(fileContent);
+        @* statusMessage = "file loaded"; *@
+        await SplitContent(fileContent);
     }
 
 
 
     // Split the content into individual messages
-    private async Task SplitMessages(string fileContent)
+    private async Task SplitContent(string fileContent)
     {
 
-        // Split fileContent (change to regex)
-        List<string> allMessages = fileContent.Split(',').ToList();
+        // Declare regex
+        string pattern = @"(?=\d{2}/\d{2}/\d{4}, \d{2}:\d{2} - )";
+
+        // Split fileContent using the regex
+        List<string> allMessages = Regex.Split(fileContent, pattern)
+        .Where(message => !string.IsNullOrEmpty(message))
+        .ToList();
 
 
         // For each message, filter and add to list
@@ -95,8 +129,12 @@
         {
             messageFormat filtered = await FilterMessages(message);
             filteredMessages.Add(filtered);
+            @* if (filteredMessages.Count % 1000 == 0 || filteredMessages.Count == allMessages.Count){
+                statusMessage = ((filteredMessages.Count).ToString() + "/" + (allMessages.Count).ToString());
+            } *@
         }
 
+        await MessageStats();
         allFiltered = true;
     }
 
@@ -105,17 +143,48 @@
     private async Task<messageFormat> FilterMessages(string message)
     {
 
-        // Split the message into parts (regex)
+        // Split the message into parts in a regex
+        string pattern = @"^(?<date>\d{2}/\d{2}/\d{4}), (?<time>\d{2}:\d{2}) - (?<sender>.*?): (?<content>.*)";
+
+
+        // Check if the message matches the regex
+        var match = new Regex(pattern).Match(message);
+
 
         // Apply each string to the correct object element
         messageFormat filtered = new messageFormat
         {
-            Date = "test",
-            Time = "test",
-            Sender = "test",
-            Content = "test",
+            Date = match.Groups["date"].Value,
+            Time = match.Groups["time"].Value,
+            Sender = match.Groups["sender"].Value,
+            Content = match.Groups["content"].Value,
         };
 
         return filtered;
+    }
+
+    // Filter the messages into their components
+    private async Task MessageStats()
+    {
+
+        // Find unique participants and save as list
+        participants = filteredMessages
+        .Where(m => !string.IsNullOrEmpty(m.Sender))
+        .Select(m => m.Sender)
+        .Distinct()
+        .ToList();
+
+        // first interaction (first message and response)
+
+        // activity per time of day
+
+        // activity per month
+
+        // fave emoji
+
+        // top 10 words
+
+        // most common messages
+
     }
 }
