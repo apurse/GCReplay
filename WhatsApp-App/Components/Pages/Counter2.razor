@@ -46,13 +46,28 @@
                     <li>@user</li>
                 }
             </ul>
+            <li>Top 10 Words:</li>
+            <ol>
+                @foreach (wordCount word in topXWords)
+                {
+                    <li>@word.Content: @word.Count</li>
+                }
+            </ol>
+            <li>Most chatty:</li>
+            <ol>
+                @foreach (wordCount sender in topSenders)
+                {
+                    <li>@sender.Content: @sender.Count</li>
+                }
+            </ol>
             <li>Earliest message: @filteredMessages.Count</li>
             <li>Latest messages: @filteredMessages.Count</li>
         </ul>
 
 
+        <h4>All messages rendered!</h4>
         @* Limit / hide this to boost performance *@
-        <h4>All messages: </h4>
+        @* <h4>All messages: </h4>
         @foreach (messageFormat message in filteredMessages)
         {
             <li>
@@ -63,15 +78,21 @@
                     <li>Message: @message?.Content</li>
                 </ul>
             </li>
-        }
+        } *@
     }
 }
+
+
+
+
 
 @* Code block for writing C# *@
 @code {
 
     private string statusMessage = "";
     private List<string> participants = new List<string> { };
+    private List<wordCount> topXWords = new List<wordCount> { };
+    private List<wordCount> topSenders = new List<wordCount> { };
 
     public class messageFormat
     {
@@ -79,6 +100,12 @@
         public string Time = "";
         public string Sender = "";
         public string Content = "";
+    }
+
+    public class wordCount
+    {
+        public string Content = "";
+        public int Count = 0;
     }
 
     private IBrowserFile? file;
@@ -96,7 +123,7 @@
         // Extract the file
         file = e.File;
 
-        // Open the text file using a stream reader.
+        // Open the text file using a stream reader (5MB limit).
         var fileStream = file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
         var reader = new StreamReader(fileStream);
 
@@ -182,9 +209,26 @@
 
         // fave emoji
 
-        // top 10 words
+        // top 10 words (duplicates present: "yeah" and "Yeah")
+        topXWords = filteredMessages
+        // Filters
+        .Where(message => !string.IsNullOrEmpty(message.Content))
+        .Where(message => message.Content != "<Media omitted>")
+        // Group and select order (toLower to reduce duplicates)
+        .GroupBy(message => message.Content.ToLower())
+        .Select(grp => new wordCount { Content = grp.Key, Count = grp.Count() })
+        .OrderByDescending(grp => grp.Count)
+        // Select top 10
+        .Take(10)
+        .ToList();
 
-        // most common messages
+        // person who sent the most
 
+        topSenders = filteredMessages
+        .Where(message => !string.IsNullOrEmpty(message.Sender))
+        .GroupBy(message => message.Sender)
+        .Select(grp => new wordCount { Content = grp.Key, Count = grp.Count() })
+        .OrderByDescending(grp => grp.Count)
+        .ToList();
     }
 }
