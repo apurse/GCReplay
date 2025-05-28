@@ -2,6 +2,11 @@
 @page "/fileInput"
 @rendermode InteractiveServer
 
+@* 14:25 - Alex Purser: Gg 28/05/2025, 14:25 - Alex Purser: Vg 28/05/2025, *@
+@* Format: *@
+@* [time] - [name]: [message] [date], *@
+
+
 <PageTitle>File Input</PageTitle>
 
 <h1>Input File</h1>
@@ -22,13 +27,40 @@
         <li>Content type: @file?.ContentType</li>
         <li>Content: @content</li>
     </ul>
+    <p>-------------------------------------------------------------------</p>
+    @if (allFiltered)
+    {
+
+        @foreach (messageFormat message in filteredMessages)
+        {
+            <li>
+                <ul>
+                    <li>Date: @message?.Date</li>
+                    <li>Time: @message?.Time</li>
+                    <li>Sender: @message?.Sender</li>
+                    <li>Message: @message?.Content</li>
+                </ul>
+            </li>
+        }
+    }
 }
 
 @* Code block for writing C# *@
 @code {
 
+    public class messageFormat
+    {
+        public string Date = "";
+        public string Time = "";
+        public string Sender = "";
+        public string Content = "";
+    }
+
     private IBrowserFile? file;
     private string content = "";
+
+    private List<object> filteredMessages = new List<object> { };
+    private bool allFiltered = false;
 
 
     private async Task LoadFile(InputFileChangeEventArgs e)
@@ -45,5 +77,45 @@
 
         // Assign to global content variable
         content = fileContent;
+        await SplitMessages(fileContent);
+    }
+
+
+
+    // Split the content into individual messages
+    private async Task SplitMessages(string fileContent)
+    {
+
+        // Split fileContent (change to regex)
+        List<string> allMessages = fileContent.Split(',').ToList();
+
+
+        // For each message, filter and add to list
+        foreach (string message in allMessages)
+        {
+            messageFormat filtered = await FilterMessages(message);
+            filteredMessages.Add(filtered);
+        }
+
+        allFiltered = true;
+    }
+
+
+    // Filter the messages into their components
+    private async Task<messageFormat> FilterMessages(string message)
+    {
+
+        // Split the message into parts (regex)
+
+        // Apply each string to the correct object element
+        messageFormat filtered = new messageFormat
+        {
+            Date = "test",
+            Time = "test",
+            Sender = "test",
+            Content = "test",
+        };
+
+        return filtered;
     }
 }
