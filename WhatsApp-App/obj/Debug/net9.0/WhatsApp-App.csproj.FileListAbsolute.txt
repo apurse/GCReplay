@@ -62,7 +62,6 @@ c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\Wha
 c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\izfiezk8yn-h1s4sie4z3.gz
 c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\nq7fso15tf-63fj8s7r0e.gz
 c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\krbuss55lw-0j3bgjxly4.gz
-c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\w8xdhdkgr7-prn9rnkwhy.gz
 c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\dx0zsmeml5-prn9rnkwhy.gz
 c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\staticwebassets.build.json
 c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\staticwebassets.build.json.cache
@@ -73,3 +72,15 @@ c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\Wha
 c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\WhatsApp-App.pdb
 c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\WhatsApp-App.genruntimeconfig.cache
 c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\ref\WhatsApp-App.dll
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\bin\Debug\net9.0\BlazorBootstrap.dll
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\WhatsApp-App.csproj.AssemblyReference.cache
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\yxfdm33bor-63oqyoiiv4.gz
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\refgsao5tb-5vmds449nb.gz
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\d5o4a4wkq9-ct0ej5e0q0.gz
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\sismm8xg1l-ezlxc6gzv3.gz
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\q8v6i1uv3e-pisakkcwob.gz
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\36w3eu0hkb-j8zp7bt7w3.gz
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\mfzx4sb2rv-79hai7knhw.gz
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\eojifsclv0-7t9tbfaemk.gz
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\w8xdhdkgr7-yan8xgcacd.gz
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\WhatsApp.CBA69592.Up2Date
