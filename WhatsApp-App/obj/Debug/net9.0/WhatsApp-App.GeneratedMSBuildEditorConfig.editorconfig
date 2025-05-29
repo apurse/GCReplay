@@ -40,6 +40,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[c:/Users/ajpur/Documents/Personal/Personal-Projects/WhatsApp-History-Manager/WhatsApp-App/Components/Pages/PieChartMaker.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQaWVDaGFydE1ha2VyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [c:/Users/ajpur/Documents/Personal/Personal-Projects/WhatsApp-History-Manager/WhatsApp-App/Components/Pages/Weather.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXZWF0aGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
