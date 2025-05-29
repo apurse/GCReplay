@@ -39,6 +39,8 @@
         <ul>
             <li>Total messages: @filteredMessages.Count</li>
             <li>Participant length: @participants.Count</li>
+
+            @* There must be a way to optimise this *@
             <li>Participants:</li>
             <ul>
                 @foreach (string user in participants)
@@ -46,60 +48,70 @@
                     <li>@user</li>
                 }
             </ul>
+
             <li>Top 10 Messages:</li>
             <ol>
-                @foreach (entryCount word in topMessages)
+                @foreach (entryCount entry in topMessages)
                 {
-                    <li>@word.Content: @word.Count</li>
+                    <li @onclick="(() => DisplayFiltered(entry.Content))">@entry.Content: @entry.Count</li>
                 }
             </ol>
             <li>Most chatty:</li>
             <ol>
-                @foreach (entryCount sender in topSenders)
+                @foreach (entryCount entry in topSenders)
                 {
-                    <li>@sender.Content: @sender.Count</li>
+                    <li @onclick="(() => DisplayFiltered(entry.Content))">@entry.Content: @entry.Count</li>
                 }
             </ol>
             <li>Top 10 emojis:</li>
             <ol>
-                @foreach (entryCount emoji in topEmojis)
+                @foreach (entryCount entry in topEmojis)
                 {
-                    <li>@emoji.Content: @emoji.Count</li>
+                    <li @onclick="(() => DisplayFiltered(entry.Content))">@entry.Content: @entry.Count</li>
                 }
             </ol>
             <li>Messages per hour:</li>
             <ul>
-                @foreach (entryCount hour in hours)
+                @foreach (entryCount entry in hours)
                 {
-                    <li>@hour.Content:00 : @hour.Count</li>
+                    <li @onclick="(() => DisplayFiltered(entry.Content))">@entry.Content:00 : @entry.Count</li>
+
                 }
             </ul>
             <li>Messages per minute:</li>
             <ul>
-                @foreach (entryCount minute in minutes)
+                @foreach (entryCount entry in minutes)
                 {
-                    <li>00:@minute.Content : @minute.Count</li>
+                    <li @onclick="(() => DisplayFiltered(entry.Content))">00:@entry.Content: @entry.Count</li>
+
                 }
             </ul>
             <li>Messages per month day:</li>
             <ul>
-                @foreach (entryCount day in monthDays)
+                @foreach (entryCount entry in monthDays)
                 {
-                    <li>@day.Content: @day.Count</li>
+                    <li @onclick="(() => DisplayFiltered(entry.Content))">@entry.Content: @entry.Count</li>
                 }
             </ul>
             <li>Messages per month:</li>
             <ul>
-                @foreach (entryCount month in months)
+                @foreach (entryCount entry in months)
                 {
-                    <li>@month.Content: @month.Count</li>
+                    <li @onclick="(() => DisplayFiltered(entry.Content))">@entry.Content: @entry.Count</li>
                 }
             </ul>
             <li>Messages per year:</li>
             <ul>
-                @foreach (entryCount year in years)
+                @foreach (entryCount entry in years)
                 {
-                    <li>@year.Content: @year.Count</li>
+                    <li @onclick="(() => DisplayFiltered(entry.Content))">@entry.Content: @entry.Count</li>
+                }
+            </ul>
+            <li>Messages per weekday:</li>
+            <ul>
+                @foreach (entryCount entry in weekdays)
+                {
+                    <li @onclick="(() => DisplayFiltered(entry.Content))">@entry.Content: @entry.Count</li>
                 }
             </ul>
             <li>Earliest message: @filteredMessages.Count</li>
@@ -121,6 +133,25 @@
                 </ul>
             </li>
         } *@
+
+        if (clickedMessages == null)
+        {
+            <p>Please select an entry to view all entries!</p>
+        }
+        else
+        {
+            @foreach (messageFormat message in clickedMessages)
+            {
+                <li>
+                    <ul>
+                        <li>Date: @message?.Date</li>
+                        <li>Time: @message?.Time</li>
+                        <li>Sender: @message?.Sender</li>
+                        <li>Message: @message?.Content</li>
+                    </ul>
+                </li>
+            }
+        }
     }
 }
 
@@ -132,6 +163,8 @@
 @code {
 
     private string statusMessage = "";
+
+    private List<List<entryCount>> AllLists = new List<List<entryCount>> { };
 
 
     // Participants
@@ -153,8 +186,7 @@
     private List<entryCount> months = new List<entryCount> { };
     private List<entryCount> monthDays = new List<entryCount> { };
     private List<entryCount> years = new List<entryCount> { };
-
-
+    private List<entryCount> weekdays = new List<entryCount> { };
 
 
     public class messageFormat
@@ -175,6 +207,7 @@
     private string content = "";
 
     private List<messageFormat> filteredMessages = new List<messageFormat> { };
+    private List<messageFormat> clickedMessages = new List<messageFormat> { };
     private bool allFiltered = false;
 
 
@@ -225,6 +258,15 @@
         }
 
         await MessageStats();
+
+        @* var selectedOptions = new List<List<entryCount>> { topSenders, topEmojis, topMessages, hours, minutes, months,
+monthDays, years };
+
+
+        foreach (List<entryCount> entry in selectedOptions)
+        {
+            AllLists.Add(entry);
+        } *@
         allFiltered = true;
     }
 
@@ -266,6 +308,16 @@
         // Get time date
         hours = await GetTimeValues("HH", filteredMessages);
         minutes = await GetTimeValues("mm", filteredMessages);
+
+
+        // Get the weekdays
+        weekdays = filteredMessages
+        .Where(message => !string.IsNullOrEmpty(message.Date))
+        .GroupBy(message =>
+        DateTime.ParseExact(message.Date, "dd/MM/yyyy",
+        System.Globalization.CultureInfo.InvariantCulture).DayOfWeek.ToString())
+        .Select(grp => new entryCount { Content = grp.Key, Count = grp.Count() })
+        .ToList();
 
 
         // Find unique participants and save as list
@@ -337,7 +389,7 @@
 
         // top 10 words (duplicates present: "yeah" and "Yeah")
         topEmojis = emojis
-        // Group and select order (toLower to reduce duplicates)
+        // Group and select order
         .GroupBy(emoji => emoji)
         .Select(grp => new entryCount { Content = grp.Key, Count = grp.Count() })
         .OrderByDescending(grp => grp.Count)
@@ -392,6 +444,17 @@
         .ToList();
 
         return timeValues;
+    }
+
+    private async Task DisplayFiltered(string filter)
+    {
+
+        clickedMessages = filteredMessages
+
+        // Check if its empty
+        .Where(message => !string.IsNullOrEmpty(message.Time))
+        .Where(message => message.Content.Contains(filter))
+        .ToList();
     }
 
 
