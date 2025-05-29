@@ -12,7 +12,7 @@
 
 
 @code {
-    
+
     // Parameters for the pieChart
     [Parameter]
     public string Title { get; set; } = "";
@@ -54,6 +54,7 @@
         var dataLabelsCount = AllLabels.Count;
 
 
+        // Load the chart data
         var dataSet = new PieChartDataset
         {
             Label = PopupLabel,
@@ -73,10 +74,13 @@
         pieChartOptions.Responsive = true;
 
         // Title settings
-        pieChartOptions.Plugins.Title!.Text = Title;
-        pieChartOptions.Plugins.Title.Font = new() { Size = 20 };
-        pieChartOptions.Plugins.Title.Color = "#fff";
-        pieChartOptions.Plugins.Title.Display = true;
+        pieChartOptions.Plugins.Title = new ChartPluginsTitle
+        {
+            Text = Title,
+            Display = true,
+            Color = "#fff",
+            Font = new() { Size = 20 }
+        };
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

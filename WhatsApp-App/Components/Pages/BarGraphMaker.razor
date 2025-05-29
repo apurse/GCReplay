@@ -1,0 +1,93 @@
+@* @namespace WhatsApp_App.Components.Graphs *@
+
+@using System.Text.RegularExpressions
+@using BlazorBootstrap
+@using Components.Models
+
+
+
+<BarChart @ref="barChart" Width="500" Height="300" />
+
+@code {
+    // Parameters for the pieChart
+    [Parameter]
+    public string Title { get; set; } = "";
+    [Parameter]
+    public string XLabel { get; set; } = "";
+    [Parameter]
+    public string YLabel { get; set; } = "";
+
+    [Parameter]
+    public List<EntryCount> Data { get; set; } = new List<EntryCount> { };
+
+    // Data variables
+    public List<string> AllLabels { get; set; } = new List<string> { };
+    public List<double?> dataValues { get; set; } = new List<double?> { };
+
+
+    private BarChart barChart = default!;
+    private BarChartOptions barChartOptions = default!;
+    private ChartData chartData = default!;
+
+    protected override void OnInitialized()
+    {
+        var datasets = new List<IChartDataset>();
+
+        // Add each entry
+        foreach (EntryCount entry in Data)
+        {
+            AllLabels.Add(entry.Content);
+            dataValues.Add(entry.Count);
+        }
+
+
+        var dataset1 = new BarChartDataset()
+        {
+            Data = dataValues,
+            BackgroundColor = new List<string> { ColorUtility.CategoricalTwelveColors[0] },
+            BorderColor = new List<string> { ColorUtility.CategoricalTwelveColors[0] },
+            BorderWidth = new List<double> { 0 },
+        };
+        datasets.Add(dataset1);
+
+        chartData = new ChartData { Labels = AllLabels, Datasets = datasets };
+
+
+        // Bar chart options
+        barChartOptions = new BarChartOptions();
+        barChartOptions.Responsive = true;
+        barChartOptions.Interaction = new Interaction { Mode = InteractionMode.Y };
+        barChartOptions.IndexAxis = "y";
+
+        // X axis settings
+        barChartOptions.Scales.X!.Title = new ChartAxesTitle
+        {
+            Text = XLabel,
+            Display = true,
+            Color = "#fff",
+            Font = new()
+            { Size = 12 }
+        };
+
+        // Y axis settings
+        barChartOptions.Scales.Y!.Title = new ChartAxesTitle
+        {
+            Text = YLabel,
+            Display = true,
+            Color = "#fff",
+            Font = new()
+            { Size = 12 }
+        };
+
+        barChartOptions.Plugins.Legend.Display = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await barChart.InitializeAsync(chartData, barChartOptions);
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}
