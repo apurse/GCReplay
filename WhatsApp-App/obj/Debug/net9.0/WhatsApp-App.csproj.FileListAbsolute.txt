@@ -83,5 +83,6 @@ c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\Wha
 c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\eojifsclv0-7t9tbfaemk.gz
 c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\WhatsApp.CBA69592.Up2Date
 c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\scopedcss\Components\Pages\Home.razor.rz.scp.css
-c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\w8xdhdkgr7-p3x6l5kc5p.gz
-c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\dx0zsmeml5-wv7vf699qb.gz
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\scopedcss\Components\Pages\Tile.razor.rz.scp.css
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\w8xdhdkgr7-7nmwq6ev6d.gz
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\dx0zsmeml5-molim9rpst.gz
