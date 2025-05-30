@@ -55,10 +55,10 @@ else
 
 
             <div class="tileContainer">
-                @foreach (List<EntryCount> list in AllLists)
+                @foreach (TileData tile in AllTiles)
                 {
                     @* title, data, message?, style, Graph *@
-                    <Tile Title="Testing" Data="list" style="@tileColours[tileCount]" />
+                    <Tile Title="@tile.TileTitle" Data="@tile.Data" style="@tileColours[tileCount]" Graph="@tile.Graph" />
                     tileCount++;
                 }
 
@@ -130,6 +130,7 @@ else
     private int tileCount = 0;
 
     private List<List<EntryCount>> AllLists = new List<List<EntryCount>> { };
+    private List<TileData> AllTiles = new List<TileData> { };
 
 
     // Participants
@@ -202,6 +203,7 @@ else
 
         // Reset page
         allFiltered = false;
+        AllTiles = new List<TileData> { };
 
         // Extract the file
         file = e.File;
@@ -384,10 +386,29 @@ monthDays, years };
         .Take(10)
         .ToList();
 
-        AllLists.Add(topEmojis);
-        AllLists.Add(topMessages);
-        AllLists.Add(topSenders);
-        AllLists.Add(months);
+        AllTiles.Add(new()
+        {
+            TileTitle = "Messages Sent per Person",
+            Data = topSenders,
+            @* Message = "ewevwwew", *@
+            Graph = new() { GraphType = "pie", GraphTitle = "Messages Sent", PopupLabel = "Sent" }
+        });
+
+        AllTiles.Add(new()
+        {
+            TileTitle = "Top Emojis",
+            Data = topEmojis,
+            @* Message = "ewevwwew", *@
+            Graph = new() { GraphType = "pie", GraphTitle = "Emojis sent", PopupLabel = "Sent" }
+        });
+
+        AllTiles.Add(new()
+        {
+            TileTitle = "Months",
+            Data = months,
+            @* Message = "ewevwwew", *@
+            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
+        });
     }
 
 

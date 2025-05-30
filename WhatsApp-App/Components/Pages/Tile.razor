@@ -10,13 +10,13 @@
     <h3>@Title</h3>
     @if (Graph != null)
     {
-        @if (Graph.Type == "pie")
+        @if (Graph.GraphType == "pie")
         {
-            <PieChartMaker Title="@Graph.Title" PopupLabel="@Graph.PopupLabel" Data="@Graph.Data" />
+            <PieChartMaker Title="@Graph.GraphTitle" PopupLabel="@Graph.PopupLabel" Data="@Data" />
         }
-        else if (Graph.Type == "bar")
+        else if (Graph.GraphType == "bar")
         {
-            <BarGraphMaker Title="@Graph.Title" XLabel="@Graph.XLabel" YLabel="@Graph.YLabel" Data="@Graph.Data" />
+            <BarGraphMaker Title="@Graph.GraphTitle" XLabel="@Graph.XLabel" YLabel="@Graph.YLabel" Data="@Data" />
         }
     }
     <ul>
