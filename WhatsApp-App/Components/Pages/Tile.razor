@@ -1,13 +1,15 @@
-﻿@* Add this as a page with a href *@
-@using System.Text.RegularExpressions
+﻿@using System.Text.RegularExpressions
 @rendermode InteractiveServer
 @using BlazorBootstrap
-
 @using Components.Models
 
 
+@* Display the Tile *@
 <div class="tile" style="@Style">
     <h3>@Title</h3>
+
+
+    @* If a graph is wanted *@
     @if (Graph != null)
     {
         @if (Graph.GraphType == "pie")
@@ -19,6 +21,9 @@
             <BarGraphMaker Title="@Graph.GraphTitle" XLabel="@Graph.XLabel" YLabel="@Graph.YLabel" Data="@Data" />
         }
     }
+
+
+    @* Display the data *@
     <ul>
         @foreach (EntryCount entry in Data)
         {
@@ -35,12 +40,6 @@
 </div>
 
 
-
-
-
-
-
-@* Code block for writing C# *@
 @code {
 
     public class messageFormat
@@ -71,11 +70,6 @@
 
     private List<messageFormat> filteredMessages = new List<messageFormat> { };
     private List<messageFormat> clickedMessages = new List<messageFormat> { };
-
-    @* protected override void OnInitialized()
-    {
-
-    } *@
 
 
     private async Task DisplayFiltered(string filter)

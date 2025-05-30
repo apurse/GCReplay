@@ -43,7 +43,6 @@ else
     @if (!allFiltered)
     {
         <p><em>Loading...</em></p>
-        @* <p><em>Loading... @statusMessage</em></p> *@
     }
     else
     {
@@ -52,21 +51,18 @@ else
         <ul>
             <li>Total messages: @filteredMessages.Count</li>
             <li>Participant length: @participants.Count</li>
+            <li>Earliest message: @filteredMessages.Count</li>
+            <li>Latest messages: @filteredMessages.Count</li>
 
 
             <div class="tileContainer">
+
+                @* Make each tile *@
                 @foreach (TileData tile in AllTiles)
                 {
-                    @* title, data, message?, style, Graph *@
                     <Tile Title="@tile.TileTitle" Data="@tile.Data" style="@tileColours[tileCount]" Graph="@tile.Graph" />
                     tileCount++;
                 }
-
-                <div class="tile">
-
-                    <li>Earliest message: @filteredMessages.Count</li>
-                    <li>Latest messages: @filteredMessages.Count</li>
-                </div>
             </div>
         </ul>
 
@@ -129,7 +125,6 @@ else
 
     private int tileCount = 0;
 
-    private List<List<EntryCount>> AllLists = new List<List<EntryCount>> { };
     private List<TileData> AllTiles = new List<TileData> { };
 
 
@@ -164,10 +159,12 @@ else
     private List<messageFormat> clickedMessages = new List<messageFormat> { };
     private bool allFiltered = false;
 
+
+    // Create colour tiles and store in list
     private async Task<List<string>> CreateTileColours(int dataEntries)
     {
         Random r = new Random();
-        List<string> tileColours2 = new List<string> { };
+        List<string> colours = new List<string> { };
 
         // For each data entry
         for (int i = 0; i < dataEntries; i++)
@@ -181,29 +178,27 @@ else
 
             string backgroundColour = $"rgb({red}, {green}, {blue})";
 
-            // Border colour
+            // Border colour (set opacity)
             string borderColour = $"rgba({red}, {green}, {blue}, 0.5)";
 
             // Combine into style
             string style = $"background-color: {backgroundColour}; border-color: {borderColour};";
 
 
-            tileColours2.Add(style);
+            colours.Add(style);
         }
 
 
-        return tileColours2;
+        return colours;
     }
 
 
     private async Task LoadFile(InputFileChangeEventArgs e)
     {
 
+        // Create colours for the tiles
         tileColours = await CreateTileColours(11);
 
-        // Reset page
-        allFiltered = false;
-        AllTiles = new List<TileData> { };
 
         // Extract the file
         file = e.File;
@@ -212,12 +207,10 @@ else
         var fileStream = file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
         var reader = new StreamReader(fileStream);
 
-        // Read the stream as a string.
+        // Read the stream as a string
         string fileContent = await reader.ReadToEndAsync();
 
-        // Assign to global content variable
-        content = fileContent;
-        @* statusMessage = "file loaded"; *@
+        // Split the content
         await SplitContent(fileContent);
     }
 
@@ -241,21 +234,10 @@ else
         {
             messageFormat filtered = await FilterMessages(message);
             filteredMessages.Add(filtered);
-            @* if (filteredMessages.Count % 1000 == 0 || filteredMessages.Count == allMessages.Count){
-                statusMessage = ((filteredMessages.Count).ToString() + "/" + (allMessages.Count).ToString());
-            } *@
         }
 
         await MessageStats();
 
-        @* var selectedOptions = new List<List<entryCount>> { topSenders, topEmojis, topMessages, hours, minutes, months,
-monthDays, years };
-
-
-        foreach (List<entryCount> entry in selectedOptions)
-        {
-            AllLists.Add(entry);
-        } *@
         allFiltered = true;
     }
 
@@ -357,9 +339,7 @@ monthDays, years };
 
         // Most sent emoji
         string emojiRegex = @"\p{So}|\p{Cs}\p{Cs}(\p{Cf}\p{Cs}\p{Cs})*";
-
         List<string> emojis = new List<string>();
-
 
         // for each message
         foreach (messageFormat message in filteredMessages)
@@ -374,23 +354,20 @@ monthDays, years };
             }
         }
 
-
-
-        // top 10 words (duplicates present: "yeah" and "Yeah")
         topEmojis = emojis
-        // Group and select order
         .GroupBy(emoji => emoji)
         .Select(grp => new EntryCount { Content = grp.Key, Count = grp.Count() })
         .OrderByDescending(grp => grp.Count)
-        // Select top 10
         .Take(10)
         .ToList();
 
+
+
+        // Manually add each tile entry
         AllTiles.Add(new()
         {
             TileTitle = "Messages Sent per Person",
             Data = topSenders,
-            @* Message = "ewevwwew", *@
             Graph = new() { GraphType = "pie", GraphTitle = "Messages Sent", PopupLabel = "Sent" }
         });
 
@@ -398,15 +375,48 @@ monthDays, years };
         {
             TileTitle = "Top Emojis",
             Data = topEmojis,
-            @* Message = "ewevwwew", *@
             Graph = new() { GraphType = "pie", GraphTitle = "Emojis sent", PopupLabel = "Sent" }
         });
 
         AllTiles.Add(new()
         {
-            TileTitle = "Months",
-            Data = months,
-            @* Message = "ewevwwew", *@
+            TileTitle = "Top 10 messages",
+            Data = topMessages,
+            Graph = new() { GraphType = "pie", GraphTitle = "Top 10 Messages", PopupLabel = "Messages Sent" }
+        });
+
+        AllTiles.Add(new()
+        {
+            TileTitle = "Messages per hour",
+            Data = hours,
+            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
+        });
+        AllTiles.Add(new()
+
+        {
+            TileTitle = "Messages per minute",
+            Data = minutes,
+            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
+        });
+        AllTiles.Add(new()
+
+        {
+            TileTitle = "Messages per year",
+            Data = years,
+            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
+        });
+
+        AllTiles.Add(new()
+        {
+            TileTitle = "Messages Sent per Month day",
+            Data = monthDays,
+            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
+        });
+
+        AllTiles.Add(new()
+        {
+            TileTitle = "Messages Sent per week days",
+            Data = weekdays,
             Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
         });
     }
@@ -436,6 +446,7 @@ monthDays, years };
     }
 
 
+
     // Get activity based on the time values.
     // @param option | the time option ("HH" "mm")
     // @param messages | the list of messages
@@ -459,6 +470,8 @@ monthDays, years };
         return timeValues;
     }
 
+
+
     private async Task DisplayFiltered(string filter)
     {
 
@@ -476,7 +489,8 @@ monthDays, years };
     {
         file = null;
         filteredMessages = new List<messageFormat> { };
+        allFiltered = false;
+        AllTiles = new List<TileData> { };
+        tileCount = 0;
     }
-
-
 }
