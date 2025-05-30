@@ -15,17 +15,21 @@
 
 <PageTitle>GCReplay Home</PageTitle>
 
-<h1>Please Input Your Desired File!</h1>
 
-
-@* Input button, loads function, only accepts .txt *@
-<InputFile OnChange="LoadFile" accept=".txt" />
 
 
 
 
 @* If a file exists, display its information *@
-@if (file != null)
+@if (file == null)
+{
+    <h1>Please Input Your Desired File!</h1>
+
+
+    @* Input button, loads function, only accepts .txt *@
+    <InputFile OnChange="LoadFile" accept=".txt" />
+}
+else
 {
     <h3>File information:</h3>
     <ul>
@@ -34,6 +38,7 @@
         <li>Size (bytes): @file?.Size</li>
         <li>Content type: @file?.ContentType</li>
     </ul>
+    <button onclick="@resetForm">Reset</button>
     <p>-------------------------------------------------------------------</p>
     @if (!allFiltered)
     {
@@ -42,22 +47,25 @@
     }
     else
     {
-        <div class="tileContainer">
+        <h3>Message information: </h3>
 
-            <h3>Message information: </h3>
+        <ul>
+            <li>Total messages: @filteredMessages.Count</li>
+            <li>Participant length: @participants.Count</li>
 
-            <ul>
-                <li>Total messages: @filteredMessages.Count</li>
-                <li>Participant length: @participants.Count</li>
 
-                @* There must be a way to optimise this *@
-                <li>Participants:</li>
-                <ul>
-                    @foreach (string user in participants)
-                    {
-                        <li>@user</li>
-                    }
-                </ul>
+            <div class="tileContainer">
+
+                <div class="tile">
+                    @* There must be a way to optimise this *@
+                    <li>Participants:</li>
+                    <ul>
+                        @foreach (string user in participants)
+                        {
+                            <li>@user</li>
+                        }
+                    </ul>
+                </div>
 
                 <div class="tile">
                     <li>Top 10 Messages:</li>
@@ -92,7 +100,7 @@
                         }
                     </ol>
                 </div>
-                
+
                 <div class="tile">
                     <li>Messages per hour:</li>
                     <ul>
@@ -103,52 +111,69 @@
                         }
                     </ul>
                 </div>
+                <div class="tile">
 
-                <li>Messages per minute:</li>
-                <ul>
-                    @foreach (EntryCount entry in minutes)
-                    {
-                        <li @onclick="(() => DisplayFiltered(entry.Content))">00:@entry.Content: @entry.Count</li>
+                    <li>Messages per minute:</li>
+                    <ul>
+                        @foreach (EntryCount entry in minutes)
+                        {
+                            <li @onclick="(() => DisplayFiltered(entry.Content))">00:@entry.Content: @entry.Count</li>
 
-                    }
-                </ul>
-                <li>Messages per month day:</li>
-                <ul>
-                    @foreach (EntryCount entry in monthDays)
-                    {
-                        <li @onclick="(() => DisplayFiltered(entry.Content))">@entry.Content: @entry.Count</li>
-                    }
-                </ul>
-                <li>Messages per month:</li>
-                <BarGraphMaker Title="Messages per Month" XLabel="Messages" YLabel="Month" Data="@months" />
+                        }
+                    </ul>
+                </div>
+                <div class="tile">
 
-                <ul>
-                    @foreach (EntryCount entry in months)
-                    {
-                        <li @onclick="(() => DisplayFiltered(entry.Content))">@entry.Content: @entry.Count</li>
-                    }
-                </ul>
-                <li>Messages per year:</li>
-                <ul>
-                    @foreach (EntryCount entry in years)
-                    {
-                        <li @onclick="(() => DisplayFiltered(entry.Content))">@entry.Content: @entry.Count</li>
-                    }
-                </ul>
-                <li>Messages per weekday:</li>
-                <BarGraphMaker Title="Messages per weekday" XLabel="Messages" YLabel="Weekday" Data="@weekdays" />
+                    <li>Messages per month day:</li>
+                    <ul>
+                        @foreach (EntryCount entry in monthDays)
+                        {
+                            <li @onclick="(() => DisplayFiltered(entry.Content))">@entry.Content: @entry.Count</li>
+                        }
+                    </ul>
+                </div>
+                <div class="tile">
 
-                <ul>
-                    @foreach (EntryCount entry in weekdays)
-                    {
-                        <li @onclick="(() => DisplayFiltered(entry.Content))">@entry.Content: @entry.Count</li>
-                    }
-                </ul>
-                <li>Earliest message: @filteredMessages.Count</li>
-                <li>Latest messages: @filteredMessages.Count</li>
-            </ul>
+                    <li>Messages per month:</li>
+                    <BarGraphMaker Title="Messages per Month" XLabel="Messages" YLabel="Month" Data="@months" />
 
-        </div>
+                    <ul>
+                        @foreach (EntryCount entry in months)
+                        {
+                            <li @onclick="(() => DisplayFiltered(entry.Content))">@entry.Content: @entry.Count</li>
+                        }
+                    </ul>
+                </div>
+                <div class="tile">
+
+                    <li>Messages per year:</li>
+                    <ul>
+                        @foreach (EntryCount entry in years)
+                        {
+                            <li @onclick="(() => DisplayFiltered(entry.Content))">@entry.Content: @entry.Count</li>
+                        }
+                    </ul>
+                </div>
+                <div class="tile">
+
+                    <li>Messages per weekday:</li>
+                    <BarGraphMaker Title="Messages per weekday" XLabel="Messages" YLabel="Weekday" Data="@weekdays" />
+
+                    <ul>
+                        @foreach (EntryCount entry in weekdays)
+                        {
+                            <li @onclick="(() => DisplayFiltered(entry.Content))">@entry.Content: @entry.Count</li>
+                        }
+                    </ul>
+                </div>
+                <div class="tile">
+
+                    <li>Earliest message: @filteredMessages.Count</li>
+                    <li>Latest messages: @filteredMessages.Count</li>
+                </div>
+            </div>
+        </ul>
+
 
 
         <h4>All messages rendered!</h4>
@@ -486,5 +511,12 @@ monthDays, years };
     }
 
 
-}
+    // Reset the page when pressed
+    private async Task resetForm()
+    {
+        file = null;
+        filteredMessages = new List<messageFormat> { };
+    }
 
+
+}
