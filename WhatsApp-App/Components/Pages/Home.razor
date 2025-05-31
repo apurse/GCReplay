@@ -16,10 +16,6 @@
 <PageTitle>GCReplay Home</PageTitle>
 
 
-
-
-
-
 @* If a file exists, display its information *@
 @if (file == null)
 {
@@ -38,7 +34,7 @@ else
         <li>Size (bytes): @file?.Size</li>
         <li>Content type: @file?.ContentType</li>
     </ul>
-    <button onclick="@resetForm">Reset</button>
+    <button @onclick="resetForm">Reset</button>
     <p>-------------------------------------------------------------------</p>
     @if (!allFiltered)
     {
@@ -55,7 +51,7 @@ else
             <li>Latest messages: @filteredMessages.Count</li>
 
 
-            <div class="tileContainer">
+            <div class="tileGrid">
 
                 @* Make each tile *@
                 @foreach (TileData tile in AllTiles)
@@ -128,7 +124,7 @@ else
 
 
     // Participants
-    private List<string> participants = new List<string> { "tesst", "test" };
+    private List<string> participants = new List<string> { };
 
 
     private List<string> tileColours = new List<string> { };
@@ -157,10 +153,10 @@ else
 
             // Background colour
 
-            string backgroundColour = $"rgb({red}, {green}, {blue})";
+            string backgroundColour = $"rgba({red}, {green}, {blue}, 0.85)";
 
             // Border colour (set opacity)
-            string borderColour = $"rgba({red}, {green}, {blue}, 0.5)";
+            string borderColour = $"rgb({red}, {green}, {blue})";
 
             // Combine into style
             string style = $"background-color: {backgroundColour}; border-color: {borderColour};";
@@ -322,6 +318,20 @@ else
     }
 
 
+    private List<EntryCount> LongestMessage()
+    {
+        var longest = filteredMessages
+        .Where(message => !string.IsNullOrEmpty(message.Content))
+        .Where(message => message.Content != "<Media omitted>")
+        .OrderByDescending(message => message.Content.Length)
+        .Select(grp => new EntryCount { Content = grp.Sender, Count = grp.Content.Length })
+        .Take(10)
+        .ToList();
+
+        return longest;
+    }
+
+
     private List<EntryCount> TopSenders()
     {
 
@@ -424,8 +434,15 @@ else
 
         AllTiles.Add(new()
         {
-            TileTitle = "Top 10 Messages",
+            TileTitle = "Top 10 Most Sent Messages",
             Data = TopMessages(),
+            Graph = new() { GraphType = "pie", GraphTitle = "Top 10 Messages", PopupLabel = "Messages Sent" }
+        });
+
+        AllTiles.Add(new()
+        {
+            TileTitle = "Top 10 Longest Messages",
+            Data = LongestMessage(),
             Graph = new() { GraphType = "pie", GraphTitle = "Top 10 Messages", PopupLabel = "Messages Sent" }
         });
 
@@ -436,7 +453,7 @@ else
             @* Message = $"00:{entry.Content}: @{entry.Count}", *@
             Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
         });
-        
+
         AllTiles.Add(new()
 
         {

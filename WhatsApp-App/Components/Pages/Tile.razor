@@ -8,38 +8,52 @@
 
 @* Display the Tile *@
 <div id="@Title.Replace(" ", "-")" class="tile" style="@Style">
-    <h3>@Title</h3>
-    <button @onclick="() => ShareTile(Title)">Share this Tile!</button>
+    <h3 class="tileHeader">@Title</h3>
+    <div class="optionsContainer">
+        <button @onclick="() => ShareTile(Title)">Share this Tile!</button>
+        <button @onclick="() => showGraph = !showGraph">Graph</button>
+        <button @onclick="() => showGraph = !showGraph">Table</button>
+    </div>
 
+    <p>Summary message here</p>
+    <p>The biggest yapper is ...</p>
 
-    @* If a graph is wanted *@
-    @if (Graph != null)
+    @if (showGraph)
     {
-        @if (Graph.GraphType == "pie")
+
+        @* If a graph is wanted *@
+        @if (Graph != null)
         {
-            <PieChartMaker Title="@Graph.GraphTitle" PopupLabel="@Graph.PopupLabel" Data="@Data" />
-        }
-        else if (Graph.GraphType == "bar")
-        {
-            <BarGraphMaker Title="@Graph.GraphTitle" XLabel="@Graph.XLabel" YLabel="@Graph.YLabel" Data="@Data" />
+            @if (Graph.GraphType == "pie")
+            {
+                <PieChartMaker Title="@Graph.GraphTitle" PopupLabel="@Graph.PopupLabel" Data="@Data" />
+            }
+            else if (Graph.GraphType == "bar")
+            {
+                <BarGraphMaker Title="@Graph.GraphTitle" XLabel="@Graph.XLabel" YLabel="@Graph.YLabel" Data="@Data" />
+            }
         }
     }
+    else
+    {
 
 
-    @* Display the data *@
-    <ul>
-        @foreach (EntryCount entry in Data)
-        {
-            @if (string.IsNullOrEmpty(Message))
+
+        @* Display the data *@
+        <ul>
+            @foreach (EntryCount entry in Data)
             {
-                <li>@entry.Content: @entry.Count</li>
+                @if (string.IsNullOrEmpty(Message))
+                {
+                    <li>@entry.Content: @entry.Count</li>
+                }
+                else
+                {
+                    <li>@Message.Replace("{Content}", entry.Content)</li>
+                }
             }
-            else
-            {
-                <li>@Message.Replace("{Content}", entry.Content)</li>
-            }
-        }
-    </ul>
+        </ul>
+    }
 </div>
 
 
@@ -69,13 +83,13 @@
     public GraphDetails? Graph { get; set; } = new GraphDetails { };
 
 
-
+    private Boolean showGraph = true;
 
     private List<messageFormat> filteredMessages = new List<messageFormat> { };
     private List<messageFormat> clickedMessages = new List<messageFormat> { };
 
 
-    private async Task DisplayFiltered(string filter)
+    private void DisplayFiltered(string filter)
     {
 
         clickedMessages = filteredMessages
