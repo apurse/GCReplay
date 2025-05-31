@@ -5,7 +5,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
-COPY ["WhatsApp-App/WhatsApp-App.csproj", "."]
+COPY ["WhatsApp-App.csproj", "."]
 RUN dotnet restore "WhatsApp-App.csproj"
 COPY . .
 RUN dotnet build "WhatsApp-App.csproj" -c Release -o /app/build
