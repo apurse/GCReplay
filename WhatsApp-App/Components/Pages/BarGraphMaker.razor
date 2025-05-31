@@ -5,8 +5,9 @@
 @using Components.Models
 
 
-
-<BarChart @ref="barChart" Width="500" Height="300" />
+<div style="background-color: #000; border-radius: 20px;">
+    <BarChart @ref="barChart" Width="500" Height="300" />
+</div>
 
 @code {
     // Parameters for the pieChart
@@ -77,6 +78,16 @@
             Color = "#fff",
             Font = new()
             { Size = 12 }
+        };
+
+        barChartOptions.Scales.X.Ticks = new ChartAxesTicks
+        {
+            Color = "#fff"
+        };
+
+        barChartOptions.Scales.Y.Ticks = new ChartAxesTicks
+        {
+            Color = "#fff"
         };
 
         barChartOptions.Plugins.Legend.Display = false;

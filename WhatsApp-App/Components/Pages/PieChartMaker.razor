@@ -7,7 +7,9 @@
 
 
 @* Display the graph *@
-<PieChart @ref="pieChart" Width="500" />
+<div style="padding: 0px ;">
+    <PieChart @ref="pieChart" Width="500" />
+</div>
 
 
 
@@ -59,7 +61,8 @@
         {
             Label = PopupLabel,
             Data = dataValues,
-            BackgroundColor = backgroundColors.Take(dataLabelsCount).ToList()
+            BackgroundColor = backgroundColors.Take(dataLabelsCount).ToList(),
+            Datalabels = { Anchor = Anchor.End }
         };
 
         // Set the chart data
@@ -73,6 +76,7 @@
         pieChartOptions = new();
         pieChartOptions.Responsive = true;
 
+
         // Title settings
         pieChartOptions.Plugins.Title = new ChartPluginsTitle
         {
@@ -81,13 +85,28 @@
             Color = "#fff",
             Font = new() { Size = 20 }
         };
+
+        pieChartOptions.Plugins.Legend = new ChartPluginsLegend
+        {
+            Display = true,
+            Labels = new ChartPluginsLegendLabels
+            {
+                Color = "#fff",
+                Font = new() { Size = 12 }
+            },
+        };
+
+
+
+
+        // Legend label options
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await pieChart.InitializeAsync(chartData, pieChartOptions);
+            await pieChart.InitializeAsync(chartData, pieChartOptions, new string[] { "ChartDataLabels" });
         }
         await base.OnAfterRenderAsync(firstRender);
     }

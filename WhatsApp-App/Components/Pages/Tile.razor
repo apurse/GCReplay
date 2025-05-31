@@ -1,12 +1,15 @@
 ﻿@using System.Text.RegularExpressions
-@rendermode InteractiveServer
+@* @rendermode InteractiveServer *@
 @using BlazorBootstrap
 @using Components.Models
+@inject IJSRuntime JS
+
 
 
 @* Display the Tile *@
-<div class="tile" style="@Style">
+<div id="@Title.Replace(" ", "-")" class="tile" style="@Style">
     <h3>@Title</h3>
+    <button @onclick="() => ShareTile(Title)">Share this Tile!</button>
 
 
     @* If a graph is wanted *@
@@ -27,13 +30,13 @@
     <ul>
         @foreach (EntryCount entry in Data)
         {
-            @if (Message != null)
+            @if (string.IsNullOrEmpty(Message))
             {
                 <li>@entry.Content: @entry.Count</li>
             }
             else
             {
-                <li>@Message</li>
+                <li>@Message.Replace("{Content}", entry.Content)</li>
             }
         }
     </ul>
@@ -81,6 +84,15 @@
         .Where(message => !string.IsNullOrEmpty(message.Time))
         .Where(message => message.Content.Contains(filter))
         .ToList();
+    }
+
+    private async Task ShareTile(string tileTitle)
+    {
+
+        // Change the title spaces to -, same as ID
+        string ID = tileTitle.Replace(" ", "-");
+        Console.WriteLine("cacekclelecalled: " + ID);
+        await JS.InvokeAsync<string>("getTile", ID);
     }
 
 }

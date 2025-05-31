@@ -337,21 +337,6 @@ else
     }
 
 
-    private List<EntryCount> MessagesPerHour()
-    {
-
-        // activity per hour of day
-        var hours = filteredMessages
-        .Where(message => !string.IsNullOrEmpty(message.Time.Split(':')[0]))
-        .GroupBy(message => message.Time.Split(':')[0])
-        .Select(grp => new EntryCount { Content = grp.Key, Count = grp.Count() })
-        .OrderByDescending(grp => grp.Content)
-        .ToList();
-
-        return hours;
-    }
-
-
     private List<EntryCount> WeekDays()
     {
 
@@ -432,14 +417,14 @@ else
 
         AllTiles.Add(new()
         {
-            TileTitle = "Top Emojis",
+            TileTitle = "Most Used Emojis",
             Data = TopEmojis(),
             Graph = new() { GraphType = "pie", GraphTitle = "Emojis sent", PopupLabel = "Sent" }
         });
 
         AllTiles.Add(new()
         {
-            TileTitle = "Top 10 messages",
+            TileTitle = "Top 10 Messages",
             Data = TopMessages(),
             Graph = new() { GraphType = "pie", GraphTitle = "Top 10 Messages", PopupLabel = "Messages Sent" }
         });
@@ -447,16 +432,11 @@ else
         AllTiles.Add(new()
         {
             TileTitle = "Messages per hour",
-            Data = MessagesPerHour(),
-            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
-        });
-
-        AllTiles.Add(new()
-        {
-            TileTitle = "Messages per hour2?",
             Data = GetTimeValues("HH", filteredMessages),
+            @* Message = $"00:{entry.Content}: @{entry.Count}", *@
             Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
         });
+        
         AllTiles.Add(new()
 
         {
