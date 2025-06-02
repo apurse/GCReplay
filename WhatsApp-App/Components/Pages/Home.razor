@@ -6,49 +6,82 @@
 
 
 <PageTitle>GCReplay Home</PageTitle>
+<div class="title">
+    <h1>Welcome to GCReplay! - The easiest way to view your group chat and DM analytics.</h1>
+</div>
+<div class="infoContainer">
 
-<h1>Welcome to GCReplay! - The easiest way to view your group chat and DM analytics.
-</h1>
+    <h2>How does GCReplay work?</h2>
+    <p>Simply upload a file containing your chat history. Our tool will analyse various aspects of your conversations,
+        such as the number of messages exchanged on a specific day, providing you with insightful statistics.
+    </p>
 
-<h2>How does GCReplay work?</h2>
-<p>Simply upload a file containing your chat history. Our tool will analyse various aspects of your conversations, such as the number of messages exchanged on a specific day, providing you with insightful statistics.
-</p>
+    <p>To begin analysing, please select the desired social media platform below.
+    </p>
+    <div class="buttonsContainer">
+        <button @onclick="@(() => navigateToPage("whatsapp"))" style="background-color: #25D366; color: #000;">
+            <span class="bi bi-whatsapp-nav-menu" aria-hidden="true"></span> WhatsApp</button>
+        <button @onclick="@(() => navigateToPage("discord"))" style="background-color: #5865F2; color: #fff;">
+            <span class="bi bi-discord-nav-menu" aria-hidden="true"></span> Discord</button>
+    </div>
+</div>
 
-<p>To begin analysing, please select the desired social media platform below.
-</p>
+<div class="FAQContainer">
 
-<button @onclick="@(() => navigateToPage("whatsapp"))">WhatsApp</button>
-<button @onclick="@(() => navigateToPage("discord"))">Discord</button>
-<button>x</button>
-<button>y</button>
- 
-<h2>Frequently Asked Questions (FAQs)
-</h2>
+    <h2>Frequently Asked Questions (FAQs)</h2>
+    <div class="questionsContainer">
 
-<h4>What happens to the data I upload?
-</h4>
-<p>When you upload your chat data, GCReplay processes it by breaking it down into individual messages, with components like:
-</p>
-<ul>
-    <li>Date: 21/06/2025</li>
-    <li>Time: 15:46</li>
-    <li>Sender: John Doe</li>
-    <li>Message: [message content]</li>
-</ul>
-<p>GCReplay then analyses each message and calculates interesting statistics based on these components.
-</p>
+        <div class="questionBox">
+            <h4 class="question">What happens to the data I upload?
+            </h4>
+            <div class="answer">
+                <p>When you upload your chat data, GCReplay processes it by breaking it down into individual
+                    messages,
+                    with
+                    components like:
+                </p>
+                <ul>
+                    <li>Date: 21/06/2025</li>
+                    <li>Time: 15:46</li>
+                    <li>Sender: John Doe</li>
+                    <li>Message: [message content]</li>
+                </ul>
+                <p>GCReplay then analyses each message and calculates interesting statistics based on these
+                    components.
+                </p>
+            </div>
+        </div>
 
-<h4>Is the content of my messages being read or shared?
-</h4>
-<p>No. While GCReplay identifies each message's structure—including emojis—it does not read, interpret, or share the content itself. Your message content remains private.
-</p>
+        <div class="questionBox">
+            <h4 class="question">Is the content of my messages being read or shared?
+            </h4>
+            <p class="answer">No. While GCReplay identifies each message's structure—including emojis—it does not
+                read,
+                interpret, or share the content itself. Your message content remains private.
+            </p>
+        </div>
 
-<h4>Is my data stored or distributed?
-</h4>
-<p>No. All analysis and calculations occur directly in your browser. GCReplay does not save, store, or distribute any of your data.
-</p>
+        <div class="questionBox">
+            <h4 class="question">Is my data stored or distributed?
+            </h4>
+            <p class="answer">No. All analysis and calculations occur directly in your browser. GCReplay does not
+                save,
+                store, or distribute any of your data.
+            </p>
+        </div>
 
-@code{
+        <div class="questionBox">
+            <h4 class="question">Is my data stored or distributed?
+            </h4>
+            <p class="answer">No. All analysis and calculations occur directly in your browser. GCReplay does not
+                save,
+                store, or distribute any of your data.
+            </p>
+        </div>
+    </div>
+</div>
+
+@code {
     private void navigateToPage(string option)
     {
         NavManager.NavigateTo($"/{option}");

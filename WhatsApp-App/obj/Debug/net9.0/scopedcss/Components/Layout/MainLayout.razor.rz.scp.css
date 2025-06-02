@@ -38,6 +38,17 @@ main[b-krm8dtzfb5] {
     text-overflow: ellipsis;
 }
 
+.footer[b-krm8dtzfb5] {
+    /* position: absolute;
+    bottom: 0;
+    left: 0; */
+    width: 100%;
+    background-color: black;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+}
+
 @media (max-width: 750.98px) {
 
     .top-row[b-krm8dtzfb5] {
@@ -47,6 +58,15 @@ main[b-krm8dtzfb5] {
     .top-row[b-krm8dtzfb5]  a,
     .top-row[b-krm8dtzfb5]  .btn-link {
         margin-left: 0;
+    }
+
+    .footer[b-krm8dtzfb5] {
+        width: 100%;
+        background-color: black;
+        text-align: center;
+        line-height: normal;
+        height: fit-content;
+        padding: 20px 0px;
     }
 }
 
@@ -100,16 +120,6 @@ main[b-krm8dtzfb5] {
     position: absolute;
     right: 0.75rem;
     top: 0.5rem;
-}
-
-.footer[b-krm8dtzfb5] {
-    /* position: absolute;
-    bottom: 0;
-    left: 0; */
-    width: 100%;
-    background-color: black;
-    height: 50px;
-    text-align: center;
 }
 
 .footerText[b-krm8dtzfb5] {

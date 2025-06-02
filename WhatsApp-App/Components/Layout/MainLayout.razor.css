@@ -38,6 +38,17 @@ main {
     text-overflow: ellipsis;
 }
 
+.footer {
+    /* position: absolute;
+    bottom: 0;
+    left: 0; */
+    width: 100%;
+    background-color: black;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+}
+
 @media (max-width: 750.98px) {
 
     .top-row {
@@ -47,6 +58,15 @@ main {
     .top-row ::deep a,
     .top-row ::deep .btn-link {
         margin-left: 0;
+    }
+
+    .footer {
+        width: 100%;
+        background-color: black;
+        text-align: center;
+        line-height: normal;
+        height: fit-content;
+        padding: 20px 0px;
     }
 }
 
@@ -100,16 +120,6 @@ main {
     position: absolute;
     right: 0.75rem;
     top: 0.5rem;
-}
-
-.footer {
-    /* position: absolute;
-    bottom: 0;
-    left: 0; */
-    width: 100%;
-    background-color: black;
-    height: 50px;
-    text-align: center;
 }
 
 .footerText {
