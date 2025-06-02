@@ -4,6 +4,8 @@
 @using System.Text.RegularExpressions
 @rendermode InteractiveServer
 @using BlazorBootstrap
+@inject IJSRuntime JS
+
 
 @using Components.Models
 @* @using Components.Graphs *@
@@ -18,6 +20,7 @@
 <h1>GCReplay - WhatsApp Analysis</h1>
 
 
+<div class="contentContainer">
 
 @* If a file exists, display its information *@
 @if (file == null)
@@ -27,6 +30,10 @@
 
     @* Input button, loads function, only accepts .txt *@
     <InputFile OnChange="LoadFile" accept=".txt" />
+    <p>When you upload your chat file, you're giving us permission to analyse it. Don't worry — your data wont be saved,
+        stored, or shared with anyone.
+
+    </p>
 }
 else
 {
@@ -45,6 +52,9 @@ else
     }
     else
     {
+        @* Not working ?? *@
+        @* <button @onclick="ShareAll">Share all results!</button> *@
+
         <h3>Message information: </h3>
 
         <ul>
@@ -52,22 +62,22 @@ else
             <li>Participant length: @participants.Count</li>
             <li>Earliest message: @filteredMessages.Count</li>
             <li>Latest messages: @filteredMessages.Count</li>
-
-
-            <div class="tileGrid">
-
-                @* Make each tile *@
-                @foreach (TileData tile in AllTiles)
-                {
-                    <Tile Title="@tile.TileTitle" Data="@tile.Data" style="@tileColours[tileCount]" Graph="@tile.Graph" />
-                    tileCount++;
-                }
-            </div>
         </ul>
 
 
+        <div class="tileGrid" id="tileGrid">
 
-        <h4>All messages rendered!</h4>
+            @* Make each tile *@
+            @foreach (TileData tile in AllTiles)
+            {
+                <Tile Title="@tile.TileTitle" Data="@tile.Data" style="@tileColours[tileCount]" Graph="@tile.Graph" />
+                tileCount++;
+            }
+        </div>
+
+
+
+        @* <h4>All messages rendered!</h4> *@
         @* Limit / hide this to boost performance *@
         @* <h4>All messages: </h4>
         @foreach (messageFormat message in filteredMessages)
@@ -102,6 +112,7 @@ else
         }
     }
 }
+</div>
 
 
 
@@ -515,5 +526,10 @@ else
         allFiltered = false;
         AllTiles = new List<TileData> { };
         tileCount = 0;
+    }
+
+    private async Task ShareAll()
+    {
+        await JS.InvokeAsync<string>("getTile", "tileGrid");
     }
 }

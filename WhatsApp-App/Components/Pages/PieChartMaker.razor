@@ -7,8 +7,8 @@
 
 
 @* Display the graph *@
-<div style="padding: 0px ;">
-    <PieChart @ref="pieChart" Width="500" />
+<div style="width: 100%">
+    <PieChart @ref="pieChart" />
 </div>
 
 
@@ -92,7 +92,8 @@
             Labels = new ChartPluginsLegendLabels
             {
                 Color = "#fff",
-                Font = new() { Size = 12 }
+                Font = new() { Size = 12 },
+                Padding = 10
             },
         };
 
