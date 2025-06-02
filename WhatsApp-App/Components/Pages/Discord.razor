@@ -1,0 +1,511 @@
+﻿@page "/discord"
+@using System.Text.RegularExpressions
+@rendermode InteractiveServer
+@using BlazorBootstrap
+@using Components.Models
+
+
+<PageTitle>GCReplay Discord</PageTitle>
+
+<h1>GCReplay - Discord Analysis</h1>
+
+
+
+@* If a file exists, display its information *@
+@if (file == null)
+{
+    <h2>Please Input Your Desired File!</h2>
+
+
+    @* Input button, loads function, only accepts .txt *@
+    <InputFile OnChange="LoadFile" accept=".txt" />
+}
+else
+{
+    <h3>File information:</h3>
+    <ul>
+        <li>Name: @file?.Name</li>
+        <li>Last modified: @file?.LastModified.ToString()</li>
+        <li>Size (bytes): @file?.Size</li>
+        <li>Content type: @file?.ContentType</li>
+    </ul>
+    <button @onclick="resetForm">Reset</button>
+    <p>-------------------------------------------------------------------</p>
+    @if (!allFiltered)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <h3>Message information: </h3>
+
+        <ul>
+            <li>Total messages: @filteredMessages.Count</li>
+            <li>Participant length: @participants.Count</li>
+            <li>Earliest message: @filteredMessages.Count</li>
+            <li>Latest messages: @filteredMessages.Count</li>
+
+
+            <div class="tileGrid">
+
+                @* Make each tile *@
+                @foreach (TileData tile in AllTiles)
+                {
+                    <Tile Title="@tile.TileTitle" Data="@tile.Data" style="@tileColours[tileCount]" Graph="@tile.Graph" />
+                    tileCount++;
+                }
+            </div>
+        </ul>
+
+
+
+        <h4>All messages rendered!</h4>
+        @* Limit / hide this to boost performance *@
+        @* <h4>All messages: </h4>
+        @foreach (messageFormat message in filteredMessages)
+        {
+            <li>
+                <ul>
+                    <li>Date: @message?.Date</li>
+                    <li>Time: @message?.Time</li>
+                    <li>Sender: @message?.Sender</li>
+                    <li>Message: @message?.Content</li>
+                </ul>
+            </li>
+        } *@
+
+        if (clickedMessages == null)
+        {
+            <p>Please select an entry to view all entries!</p>
+        }
+        else
+        {
+            @foreach (messageFormat message in clickedMessages)
+            {
+                <li>
+                    <ul>
+                        <li>Date: @message?.Date</li>
+                        <li>Time: @message?.Time</li>
+                        <li>Sender: @message?.Sender</li>
+                        <li>Message: @message?.Content</li>
+                    </ul>
+                </li>
+            }
+        }
+    }
+}
+
+
+
+
+
+@* Code block for writing C# *@
+@code {
+
+    public class messageFormat
+    {
+        public string Date = "";
+        public string Time = "";
+        public string Sender = "";
+        public string Content = "";
+    }
+
+
+
+
+    private int tileCount = 0;
+
+    private List<TileData> AllTiles = new List<TileData> { };
+
+
+    // Participants
+    private List<string> participants = new List<string> { };
+
+
+    private List<string> tileColours = new List<string> { };
+
+
+    private IBrowserFile? file;
+
+    private List<messageFormat> filteredMessages = new List<messageFormat> { };
+    private List<messageFormat> clickedMessages = new List<messageFormat> { };
+    private bool allFiltered = false;
+
+
+    // Create colour tiles and store in list
+    private List<string> CreateTileColours(int dataEntries)
+    {
+        Random r = new Random();
+        List<string> colours = new List<string> { };
+
+        // For each data entry
+        for (int i = 0; i < dataEntries; i++)
+        {
+            // Get colours
+            int red = r.Next(0, 100);
+            int green = r.Next(0, 100);
+            int blue = r.Next(0, 100);
+
+            // Background colour
+
+            string backgroundColour = $"rgba({red}, {green}, {blue}, 0.85)";
+
+            // Border colour (set opacity)
+            string borderColour = $"rgb({red}, {green}, {blue})";
+
+            // Combine into style
+            string style = $"background-color: {backgroundColour}; border-color: {borderColour};";
+
+
+            colours.Add(style);
+        }
+
+
+        return colours;
+    }
+
+
+    #region Data Preparation
+
+    private async Task LoadFile(InputFileChangeEventArgs e)
+    {
+
+        // Create colours for the tiles
+        tileColours = CreateTileColours(11);
+
+
+        // Extract the file
+        file = e.File;
+
+        // Open the text file using a stream reader (5MB limit).
+        var fileStream = file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
+        var reader = new StreamReader(fileStream);
+
+        // Read the stream as a string
+        string fileContent = await reader.ReadToEndAsync();
+
+        // Split the content
+        SplitContent(fileContent);
+    }
+
+
+
+    // Split the content into individual messages
+    private void SplitContent(string fileContent)
+    {
+
+        // Declare regex
+        string pattern = @"(?=\d{2}/\d{2}/\d{4}, \d{2}:\d{2} - )";
+
+        // Split fileContent using the regex
+        List<string> allMessages = Regex.Split(fileContent, pattern)
+        .Where(message => !string.IsNullOrEmpty(message))
+        .ToList();
+
+
+        // For each message, filter and add to list
+        foreach (string message in allMessages)
+        {
+            messageFormat filtered = FilterMessages(message);
+            filteredMessages.Add(filtered);
+        }
+
+        BeginMessageFiltering();
+
+        allFiltered = true;
+    }
+
+
+    // Filter the messages into their components
+    private messageFormat FilterMessages(string message)
+    {
+
+        // Split the message into parts in a regex
+        string pattern = @"^(?<date>\d{2}/\d{2}/\d{4}), (?<time>\d{2}:\d{2}) - (?<sender>.*?): (?<content>.*)";
+
+
+        // Check if the message matches the regex
+        var match = new Regex(pattern).Match(message);
+
+
+        // Apply each string to the correct object element
+        messageFormat filtered = new messageFormat
+        {
+            Date = match.Groups["date"].Value,
+            Time = match.Groups["time"].Value,
+            Sender = match.Groups["sender"].Value,
+            Content = match.Groups["content"].Value,
+        };
+
+        return filtered;
+    }
+
+
+    #endregion Data Preparation
+
+    #region Data Filtering
+
+    // Filter the messages into their components
+    private void BeginMessageFiltering()
+    {
+
+        // Find unique participants and save as list
+        participants = filteredMessages
+        .Where(m => !string.IsNullOrEmpty(m.Sender))
+        .Select(m => m.Sender)
+        .Distinct()
+        .ToList();
+
+        // first interaction (first message and response)
+
+        // most curious (look for ?)
+
+        CreateTiles();
+    }
+
+
+    private List<EntryCount> TopEmojis()
+    {
+        // Most sent emoji
+        string emojiRegex = @"\p{So}|\p{Cs}\p{Cs}(\p{Cf}\p{Cs}\p{Cs})*";
+        List<string> emojis = new List<string>();
+
+        // for each message
+        foreach (messageFormat message in filteredMessages)
+        {
+            // Check if the emoji matches the regex
+            var matches = Regex.Matches(message.Content, emojiRegex);
+
+            // for every match, add to list
+            foreach (Match match in matches)
+            {
+                emojis.Add(match.Value);
+            }
+        }
+
+        var topEmojis = emojis
+        .GroupBy(emoji => emoji)
+        .Select(grp => new EntryCount { Content = grp.Key, Count = grp.Count() })
+        .OrderByDescending(grp => grp.Count)
+        .Take(10)
+        .ToList();
+
+        return topEmojis;
+    }
+
+
+    private List<EntryCount> TopMessages()
+    {
+        // top 10 words (duplicates present: "yeah" and "Yeah")
+        var topMessages = filteredMessages
+        // Filters
+        .Where(message => !string.IsNullOrEmpty(message.Content))
+        .Where(message => message.Content != "<Media omitted>")
+        // Group and select order (toLower to reduce duplicates)
+        .GroupBy(message => message.Content.ToLower())
+        .Select(grp => new EntryCount { Content = grp.Key, Count = grp.Count() })
+        .OrderByDescending(grp => grp.Count)
+        // Select top 10
+        .Take(10)
+        .ToList();
+
+        return topMessages;
+    }
+
+
+    private List<EntryCount> LongestMessage()
+    {
+        var longest = filteredMessages
+        .Where(message => !string.IsNullOrEmpty(message.Content))
+        .Where(message => message.Content != "<Media omitted>")
+        .OrderByDescending(message => message.Content.Length)
+        .Select(grp => new EntryCount { Content = grp.Sender, Count = grp.Content.Length })
+        .Take(10)
+        .ToList();
+
+        return longest;
+    }
+
+
+    private List<EntryCount> TopSenders()
+    {
+
+        // person who sent the most
+        var topSenders = filteredMessages
+        .Where(message => !string.IsNullOrEmpty(message.Sender))
+        .GroupBy(message => message.Sender)
+        .Select(grp => new EntryCount { Content = grp.Key, Count = grp.Count() })
+        .OrderByDescending(grp => grp.Count)
+        .ToList();
+
+        return topSenders;
+    }
+
+
+    private List<EntryCount> WeekDays()
+    {
+
+        // Get the weekdays
+        var weekdays = filteredMessages
+        .Where(message => !string.IsNullOrEmpty(message.Date))
+        .GroupBy(message =>
+        DateTime.ParseExact(message.Date, "dd/MM/yyyy",
+        System.Globalization.CultureInfo.InvariantCulture).DayOfWeek.ToString())
+        .Select(grp => new EntryCount { Content = grp.Key, Count = grp.Count() })
+        .ToList();
+
+        return weekdays;
+    }
+
+
+    // Get activity based on the date values.
+    // @param option | the date option ("dd" "MM" "yyyy")
+    // @param messages | the list of messages
+    private List<EntryCount> GetDateInformation(string option, List<messageFormat> messages)
+    {
+        var dateValues = messages
+
+        // Check if its empty
+        .Where(message => !string.IsNullOrEmpty(message.Date))
+
+        // Parse date and extract using the selected option
+        .GroupBy(message =>
+        DateTime.ParseExact(message.Date, "dd/MM/yyyy",
+        System.Globalization.CultureInfo.InvariantCulture).ToString(option))
+
+        // Add to object and organise the list
+        .Select(grp => new EntryCount { Content = grp.Key, Count = grp.Count() })
+        .OrderByDescending(grp => grp.Content)
+        .ToList();
+
+        return dateValues;
+    }
+
+
+    // Get activity based on the time values.
+    // @param option | the time option ("HH" "mm")
+    // @param messages | the list of messages
+    private List<EntryCount> GetTimeValues(string option, List<messageFormat> messages)
+    {
+        var timeValues = messages
+
+        // Check if its empty
+        .Where(message => !string.IsNullOrEmpty(message.Time))
+
+        // Parse time and extract using the selected option
+        .GroupBy(message =>
+        DateTime.ParseExact(message.Time, "HH:mm",
+        System.Globalization.CultureInfo.InvariantCulture).ToString(option))
+
+        // Add to object and organise the list
+        .Select(grp => new EntryCount { Content = grp.Key, Count = grp.Count() })
+        .OrderByDescending(grp => grp.Content)
+        .ToList();
+
+        return timeValues;
+    }
+
+
+    #endregion Data Filtering
+
+
+    // Manually add each tile entries and data
+    private void CreateTiles()
+    {
+
+        AllTiles.Add(new()
+        {
+            TileTitle = "Messages Sent per Person",
+            Data = TopSenders(),
+            Graph = new() { GraphType = "pie", GraphTitle = "Messages Sent", PopupLabel = "Sent" }
+        });
+
+        AllTiles.Add(new()
+        {
+            TileTitle = "Most Used Emojis",
+            Data = TopEmojis(),
+            Graph = new() { GraphType = "pie", GraphTitle = "Emojis sent", PopupLabel = "Sent" }
+        });
+
+        AllTiles.Add(new()
+        {
+            TileTitle = "Top 10 Most Sent Messages",
+            Data = TopMessages(),
+            Graph = new() { GraphType = "pie", GraphTitle = "Top 10 Messages", PopupLabel = "Messages Sent" }
+        });
+
+        AllTiles.Add(new()
+        {
+            TileTitle = "Top 10 Longest Messages",
+            Data = LongestMessage(),
+            Graph = new() { GraphType = "pie", GraphTitle = "Top 10 Messages", PopupLabel = "Messages Sent" }
+        });
+
+        AllTiles.Add(new()
+        {
+            TileTitle = "Messages per hour",
+            Data = GetTimeValues("HH", filteredMessages),
+            @* Message = $"00:{entry.Content}: @{entry.Count}", *@
+            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
+        });
+
+        AllTiles.Add(new()
+
+        {
+            TileTitle = "Messages per minute",
+            Data = GetTimeValues("mm", filteredMessages),
+            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
+        });
+        AllTiles.Add(new()
+
+        {
+            TileTitle = "Messages per year",
+            Data = GetDateInformation("yyyy", filteredMessages),
+            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
+        });
+
+        AllTiles.Add(new()
+        {
+            TileTitle = "Messages Sent per Month",
+            Data = GetDateInformation("MM", filteredMessages),
+            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
+        });
+
+        AllTiles.Add(new()
+        {
+            TileTitle = "Messages Sent per month days",
+            Data = GetDateInformation("dd", filteredMessages),
+            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
+        });
+
+        AllTiles.Add(new()
+        {
+            TileTitle = "Messages Sent per week day",
+            Data = WeekDays(),
+            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
+        });
+    }
+
+
+    private void DisplayFiltered(string filter)
+    {
+
+        clickedMessages = filteredMessages
+
+        // Check if its empty
+        .Where(message => !string.IsNullOrEmpty(message.Time))
+        .Where(message => message.Content.Contains(filter))
+        .ToList();
+    }
+
+
+    // Reset the page when pressed
+    private void resetForm()
+    {
+        file = null;
+        filteredMessages = new List<messageFormat> { };
+        allFiltered = false;
+        AllTiles = new List<TileData> { };
+        tileCount = 0;
+    }
+}

@@ -96,3 +96,17 @@ main {
         right: 0.75rem;
         top: 0.5rem;
     }
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: black;
+    height: 50px;
+    text-align: center;
+    vertical-align: middle;
+}
+.footerText {
+    color: #fff;
+}
