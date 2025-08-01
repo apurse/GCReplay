@@ -8,11 +8,21 @@
 
 @* Display the Tile *@
 <div id="@Title.Replace(" ", "-")" class="tile" style="@Style">
+    <div style="position: absolute;top: 2px;left: 6px;">GCReplay.onrender.com</div>
     <h3 class="tileHeader">@Title</h3>
     <div class="optionsContainer">
-        <button @onclick="() => ShareTile(Title)">Share this Tile!</button>
-        <button @onclick="() => showGraph = !showGraph">Graph</button>
-        <button @onclick="() => showGraph = !showGraph">Table</button>
+        <div class="icon">
+            <Icon Name="IconName.PaletteFill" @onclick="() => showGraph = !showGraph"/>
+        </div>
+        <div class="icon">
+            <Icon Name="IconName.GraphUp" @onclick="() => showGraph = !showGraph"/>
+        </div>
+        <div class="icon">
+            <Icon Name="IconName.Table" @onclick="() => showGraph = !showGraph"/>
+        </div>
+        <div class="icon">
+            <Icon Name="IconName.Share" @onclick="() => ShareTile(Title)"/>
+        </div>
     </div>
 
     @* <p>Summary message here</p>
@@ -36,9 +46,6 @@
     }
     else
     {
-
-
-
         @* Display the data *@
         <ul>
             @foreach (EntryCount entry in Data)

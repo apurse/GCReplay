@@ -20,69 +20,107 @@
 <h1 class="title">GCReplay - WhatsApp Analysis</h1>
 
 
+@if (loading)
+{
+    <div style="text-align: center; justify-items: center;">
+        <div class="demo">
+            <div class="grid-minimal">
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+            </div>
+        </div>
+        <p style="font-weight: bold; font-style: normal;"><em>Loading...</em></p>
+    </div>
+}
+
 <div class="contentContainer">
 
-@* If a file exists, display its information *@
-@if (file == null)
-{
-    <h2>Please Input Your Desired File!</h2>
-
-
-    @* Input button, loads function, only accepts .txt *@
-    <InputFile OnChange="LoadFile" accept=".txt" />
-    <p>When you upload your chat file, you're giving us permission to analyse it. Don't worry — your data wont be saved,
-        stored, or shared with anyone.
-
-    </p>
-}
-else
-{
-    <h3>File information:</h3>
-    <ul>
-        <li>Name: @file?.Name</li>
-        <li>Last modified: @file?.LastModified.ToString()</li>
-        <li>Size (bytes): @file?.Size</li>
-        <li>Content type: @file?.ContentType</li>
-    </ul>
-    <button @onclick="resetForm">Reset</button>
-    <p>-------------------------------------------------------------------</p>
-    @if (!allFiltered)
+    @* If a file exists, display its information *@
+    @if (file == null)
     {
-        <p><em>Loading...</em></p>
+        <h2>Please Input Your Desired File!</h2>
+
+        @* Input button, loads function, only accepts .txt *@
+        <InputFile OnChange="LoadFile" accept=".txt" />
+        <p>When you upload your chat file, you're giving us permission to analyse it. Don't worry — your data wont be saved,
+            stored, or shared with anyone.
+        </p>
     }
-    else
+    else if (!loading)
     {
-        @* Not working ?? *@
-        @* <button @onclick="ShareAll">Share all results!</button> *@
-
-        <h3>Message information: </h3>
-
-        <ul>
-            <li>Total messages: @filteredMessages.Count</li>
-            <li>Participant length: @participants.Count</li>
-            <li>Earliest message: @filteredMessages.Count</li>
-            <li>Latest messages: @filteredMessages.Count</li>
-        </ul>
-    
-
-        <h2>@file?.Name</h2>
-        <h3>12/05/2020 -02/06/2025</h3>
-
-        <div class="tileGrid" id="tileGrid">
-
-            @* Make each tile *@
-            @foreach (TileData tile in AllTiles)
-            {
-                <Tile Title="@tile.TileTitle" Data="@tile.Data" style="@tileColours[tileCount]" Graph="@tile.Graph" />
-                tileCount++;
-            }
+        <div style="display: flex;">
+            <div>
+                <h3>File information:</h3>
+                <ul>
+                    <li>Name: @file?.Name</li>
+                    <li>Last modified: @file?.LastModified.ToString()</li>
+                    <li>Size (bytes): @file?.Size</li>
+                    <li>Content type: @file?.ContentType</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Message information: </h3>
+                <ul>
+                    <li>Total messages: @filteredMessages.Count</li>
+                    <li>Participant length: @participants.Count</li>
+                    <li>Earliest message: @filteredMessages.Count</li>
+                    <li>Latest messages: @filteredMessages.Count</li>
+                </ul>
+            </div>
+            <div>
+                <button @onclick="resetForm">Reset</button>
+                <button @onclick="ShareAll">Share all results!</button>
+            </div>
         </div>
 
+        <div id="tileGridID">
+            <div class="titleInfo">
+                @if (participants?.Count <= 2)
+                {
+                    <h1>@($"{participants[0]} and {participants[1]}'s Chat!")</h1>
+                }
+                else
+                {
+                    <h1>@file?.Name.Substring(0, file.Name.Length - 4)</h1>
+                }
+                <h3>@oldestMessage - @latestMessage</h3>
+            </div>
+
+            <div class="tileGrid">
+
+                @* Make each tile *@
+                @{
+                    tileCount = 0;
+                }
+                @foreach (TileData tile in AllTiles)
+                {
+                    <Tile Title="@tile.TileTitle" Data="@tile.Data" style="@tileColours[tileCount]" Graph="@tile.Graph" />
+                    tileCount++;
+                }
+            </div>
+        </div>
+    }
+</div>
 
 
-        @* <h4>All messages rendered!</h4> *@
-        @* Limit / hide this to boost performance *@
-        @* <h4>All messages: </h4>
+
+@* <h4>All messages rendered!</h4> *@
+@* Limit / hide this to boost performance *@
+@* <h4>All messages: </h4>
         @foreach (messageFormat message in filteredMessages)
         {
             <li>
@@ -95,7 +133,7 @@ else
             </li>
         } *@
 
-        if (clickedMessages == null)
+@* @if (clickedMessages == null)
         {
             <p>Please select an entry to view all entries!</p>
         }
@@ -112,10 +150,7 @@ else
                     </ul>
                 </li>
             }
-        }
-    }
-}
-</div>
+        } *@
 
 
 
@@ -132,13 +167,10 @@ else
         public string Content = "";
     }
 
-
-
-
     private int tileCount = 0;
+    public bool loading = false;
 
     private List<TileData> AllTiles = new List<TileData> { };
-
 
     // Participants
     private List<string> participants = new List<string> { };
@@ -146,12 +178,14 @@ else
 
     private List<string> tileColours = new List<string> { };
 
-
     private IBrowserFile? file;
 
     private List<messageFormat> filteredMessages = new List<messageFormat> { };
     private List<messageFormat> clickedMessages = new List<messageFormat> { };
     private bool allFiltered = false;
+
+    private string oldestMessage;
+    private string latestMessage;
 
 
     // Create colour tiles and store in list
@@ -191,7 +225,7 @@ else
 
     private async Task LoadFile(InputFileChangeEventArgs e)
     {
-
+        loading = true;
         // Create colours for the tiles
         tileColours = CreateTileColours(11);
 
@@ -279,6 +313,16 @@ else
         .ToList();
 
         // first interaction (first message and response)
+        var oldestMessageDate = filteredMessages
+        .Where(m => !string.IsNullOrEmpty(m.Date))
+        .Min(m => DateTime.ParseExact(m.Date, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture)).ToString();
+
+        var latestMessageDate = filteredMessages
+        .Where(m => !string.IsNullOrEmpty(m.Date))
+        .Max(m => DateTime.ParseExact(m.Date, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture)).ToString();
+
+        oldestMessage = oldestMessageDate.Substring(0, oldestMessageDate.Length - 9);
+        latestMessage = latestMessageDate.Substring(0, latestMessageDate.Length - 9);
 
         // most curious (look for ?)
 
@@ -351,7 +395,6 @@ else
 
     private List<EntryCount> TopSenders()
     {
-
         // person who sent the most
         var topSenders = filteredMessages
         .Where(message => !string.IsNullOrEmpty(message.Sender))
@@ -427,14 +470,12 @@ else
         return timeValues;
     }
 
-
     #endregion Data Filtering
 
 
     // Manually add each tile entries and data
     private void CreateTiles()
     {
-
         AllTiles.Add(new()
         {
             TileTitle = "Messages Sent per Person",
@@ -467,23 +508,21 @@ else
         {
             TileTitle = "Messages per hour",
             Data = GetTimeValues("HH", filteredMessages),
-            @* Message = $"00:{entry.Content}: @{entry.Count}", *@
-            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
+            Graph = new() { GraphType = "bar", XLabel = "Messages Sent", YLabel = "Hour" }
         });
 
         AllTiles.Add(new()
-
         {
             TileTitle = "Messages per minute",
             Data = GetTimeValues("mm", filteredMessages),
-            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
+            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Minute" }
         });
         AllTiles.Add(new()
 
         {
             TileTitle = "Messages per year",
             Data = GetDateInformation("yyyy", filteredMessages),
-            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
+            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Year" }
         });
 
         AllTiles.Add(new()
@@ -497,15 +536,17 @@ else
         {
             TileTitle = "Messages Sent per month days",
             Data = GetDateInformation("dd", filteredMessages),
-            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
+            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month day" }
         });
 
         AllTiles.Add(new()
         {
             TileTitle = "Messages Sent per week day",
             Data = WeekDays(),
-            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Month" }
+            Graph = new() { GraphType = "bar", GraphTitle = "Emojis sent", XLabel = "Messages Sent", YLabel = "Weekday" }
         });
+
+        loading = false;
     }
 
 
@@ -533,6 +574,6 @@ else
 
     private async Task ShareAll()
     {
-        await JS.InvokeAsync<string>("getTile", "tileGrid");
+        await JS.InvokeAsync<string>("getTile", "tileGridID");
     }
 }
