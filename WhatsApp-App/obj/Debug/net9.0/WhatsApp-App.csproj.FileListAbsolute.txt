@@ -85,5 +85,5 @@ c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\Wha
 c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\scopedcss\Components\Pages\Home.razor.rz.scp.css
 c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\scopedcss\Components\Pages\Tile.razor.rz.scp.css
 c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\scopedcss\Components\Pages\WhatsApp.razor.rz.scp.css
-c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\w8xdhdkgr7-etgse92gom.gz
-c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\dx0zsmeml5-7je34yq8k2.gz
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\w8xdhdkgr7-mhy18elfje.gz
+c:\Users\ajpur\Documents\Personal\Personal-Projects\WhatsApp-History-Manager\WhatsApp-App\obj\Debug\net9.0\compressed\dx0zsmeml5-96du39j4ln.gz

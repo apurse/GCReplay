@@ -336,6 +336,7 @@ main[b-krm8dtzfb5] {
 }
 /* _content/WhatsApp-App/Components/Pages/Tile.razor.rz.scp.css */
 .tile[b-b0g3tpxzs9] {
+    position: relative;
     display: flex;
     flex-direction: column;
     border-radius: 20px;
@@ -352,11 +353,21 @@ main[b-krm8dtzfb5] {
     text-align: center;
     font-size: 32px;
     font-family: 'Poppins', sans-serif;
+    margin-top: 20px;
 }
 
 .optionsContainer[b-b0g3tpxzs9]{
+    gap: 30px;
+    position: absolute;
+    top: 5px;
+    right: 10px;
     display: flex;
-    padding: 20px;
+    padding: 0%;
+}
+
+.icon[b-b0g3tpxzs9]{
+    cursor: pointer;
+    font-size: 24px;
 }
 /* _content/WhatsApp-App/Components/Pages/WhatsApp.razor.rz.scp.css */
 .tileGrid[b-aoz94iou5j] {
@@ -380,4 +391,52 @@ main[b-krm8dtzfb5] {
 .title[b-aoz94iou5j] {
     padding: 30px;
     text-align: center;
+}
+
+.titleInfo[b-aoz94iou5j]{
+    text-align: center;
+    font-weight: bold;
+    h1{
+        font-size: 60px;
+    }
+    h2[b-aoz94iou5j]{
+        font-size: 40px;
+    }
+}
+
+/* Grid */
+.grid-minimal[b-aoz94iou5j] {
+    width: 80px;
+    height: 80px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 1px;
+}
+
+.grid-cell[b-aoz94iou5j] {
+    background: #e8e8e8;
+    animation: grid-fill-b-aoz94iou5j 2s ease-in-out infinite;
+}
+
+.grid-cell:nth-child(1)[b-aoz94iou5j] { animation-delay: 0s; }
+.grid-cell:nth-child(2)[b-aoz94iou5j] { animation-delay: 0.1s; }
+.grid-cell:nth-child(3)[b-aoz94iou5j] { animation-delay: 0.2s; }
+.grid-cell:nth-child(4)[b-aoz94iou5j] { animation-delay: 0.3s; }
+.grid-cell:nth-child(5)[b-aoz94iou5j] { animation-delay: 0.4s; }
+.grid-cell:nth-child(6)[b-aoz94iou5j] { animation-delay: 0.5s; }
+.grid-cell:nth-child(7)[b-aoz94iou5j] { animation-delay: 0.6s; }
+.grid-cell:nth-child(8)[b-aoz94iou5j] { animation-delay: 0.7s; }
+.grid-cell:nth-child(9)[b-aoz94iou5j] { animation-delay: 0.8s; }
+.grid-cell:nth-child(10)[b-aoz94iou5j] { animation-delay: 0.9s; }
+.grid-cell:nth-child(11)[b-aoz94iou5j] { animation-delay: 1s; }
+.grid-cell:nth-child(12)[b-aoz94iou5j] { animation-delay: 1.1s; }
+.grid-cell:nth-child(13)[b-aoz94iou5j] { animation-delay: 1.2s; }
+.grid-cell:nth-child(14)[b-aoz94iou5j] { animation-delay: 1.3s; }
+.grid-cell:nth-child(15)[b-aoz94iou5j] { animation-delay: 1.4s; }
+.grid-cell:nth-child(16)[b-aoz94iou5j] { animation-delay: 1.5s; }
+
+@keyframes grid-fill-b-aoz94iou5j {
+    0%, 100% { background: #e8e8e8; }
+    50% { background: #1a1a1a; }
 }
