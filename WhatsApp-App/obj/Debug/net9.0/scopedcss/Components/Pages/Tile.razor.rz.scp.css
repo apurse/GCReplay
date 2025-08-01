@@ -1,4 +1,5 @@
 .tile[b-b0g3tpxzs9] {
+    position: relative;
     display: flex;
     flex-direction: column;
     border-radius: 20px;
@@ -15,9 +16,19 @@
     text-align: center;
     font-size: 32px;
     font-family: 'Poppins', sans-serif;
+    margin-top: 20px;
 }
 
 .optionsContainer[b-b0g3tpxzs9]{
+    gap: 30px;
+    position: absolute;
+    top: 2px;
+    right: 10px;
     display: flex;
-    padding: 20px;
+    padding: 0%;
+}
+
+.icon[b-b0g3tpxzs9]{
+    cursor: pointer;
+    font-size: 24px;
 }
